@@ -6,8 +6,10 @@ import os
 
 class ContentRecommendationSystem:
     def __init__(self, model_name, tokenizer_name):
-        self.recommendation_model = transformers.AutoModelForSequenceClassification.from_pretrained(model_name)
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer_name)
+        self.recommendation_model = transformers.AutoModelForSequenceClassification.from_pretrained(
+            model_name)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
+            tokenizer_name)
         self.resource_dir = self.create_resource_directory()
 
     def create_resource_directory(self):
@@ -30,7 +32,8 @@ class ContentRecommendationSystem:
         return metadata
 
     def analyze_content(self, content):
-        encoded_content = self.tokenizer.encode(content, truncation=True, padding=True, max_length=512, return_tensors='pt')
+        encoded_content = self.tokenizer.encode(
+            content, truncation=True, padding=True, max_length=512, return_tensors='pt')
         analyzed_content = self.recommendation_model(encoded_content)
         return analyzed_content
 
@@ -42,7 +45,8 @@ class ContentRecommendationSystem:
         for url in relevant_urls:
             metadata = self.extract_information(url)
             analyzed_content = self.analyze_content(metadata)
-            recommendations.extend(self.recommendation_algorithm(user_query, analyzed_content))
+            recommendations.extend(self.recommendation_algorithm(
+                user_query, analyzed_content))
 
         return recommendations
 
@@ -51,7 +55,8 @@ class ContentRecommendationSystem:
             resource_url = res.get('resource_url')
             resource_type = res.get('resource_type')
             response = requests.get(resource_url)
-            resource_path = os.path.join(self.resource_dir, f'{resource_type}_{len(os.listdir(self.resource_dir)) + 1}')
+            resource_path = os.path.join(
+                self.resource_dir, f'{resource_type}_{len(os.listdir(self.resource_dir)) + 1}')
             with open(resource_path, 'wb') as f:
                 f.write(response.content)
 
@@ -90,7 +95,8 @@ class ContentRecommendationSystem:
     def execute(self, search_engine_url):
         while True:
             user_query = self.wait_for_user_input()
-            recommendations = self.generate_recommendations(user_query, search_engine_url)
+            recommendations = self.generate_recommendations(
+                user_query, search_engine_url)
             self.download_resources(recommendations)
             self.feedback_system()
             self.ensure_privacy_security()
